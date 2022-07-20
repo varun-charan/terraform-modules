@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Call pyaction
-      uses: varun-charan/pyaction@v0.2.0
+      uses: varun-charan/pyaction@hotfix/make-pyaction-work
       with:
         devops_version: v0.2.0
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
