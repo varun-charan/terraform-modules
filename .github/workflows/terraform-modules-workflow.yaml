@@ -1,19 +1,19 @@
 name: consume-custom-action
 
 on:
-  # push:
-  #   branches:
-  #     # Meant for NETxxyy-* tickets
-  #     - feature/*
-  #     # Meant for DEVOPS-* tickets
-  #     - hotfix/*
-  # pull_request:
-  #   types:
-  #     - closed
-  #     - synchronize
-  #   branches:
-  #     # Meant for running after PR merged on master
-  #     - master
+  push:
+    branches:
+      # Meant for NETxxyy-* tickets
+      - feature/*
+      # Meant for DEVOPS-* tickets
+      - hotfix/*
+  pull_request:
+    types:
+      - closed
+      - synchronize
+    branches:
+      # Meant for running after PR merged on master
+      - master
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
