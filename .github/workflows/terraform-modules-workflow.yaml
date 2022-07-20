@@ -28,16 +28,3 @@ jobs:
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         command: "exec"
         args: "python3 --version"
-
-  non_exec_command:
-    runs-on: ubuntu-latest
-    steps: 
-    - name: Test pyaction with non-exec devops cli command
-      uses: varun-charan/pyaction@v0.3.0
-      with:
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        command: "cheeseshop"
-        subcommand: "server-up"
-        args: "-t devops"
-      
-      
