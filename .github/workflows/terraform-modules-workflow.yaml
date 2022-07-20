@@ -21,6 +21,9 @@ jobs:
   # This is the actual calling job that calls the reusable workflow - to push image into Docker Artifactory Repo.
   exec_command:
     runs-on: ubuntu-latest
+    environment: 
+      name: development
+      url: 'http://exec.myapp.com'
     steps:
     - name: Test pyaction with exec devops cli command
       uses: varun-charan/pyaction@hotfix/make-pyaction-work
@@ -33,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: development
-      url: 'http://test.myapp.com'
+      url: 'http://non-exec.myapp.com'
     steps: 
     - name: Test pyaction with non-exec devops cli command
       uses: varun-charan/pyaction@hotfix/make-pyaction-work
