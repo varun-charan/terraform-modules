@@ -1,30 +1,33 @@
 name: consume-custom-action
 
 on:
-  push:
-    branches:
-      # Meant for NETxxyy-* tickets
-      - feature/*
-      # Meant for DEVOPS-* tickets
-      - hotfix/*
-  pull_request:
-    types:
-      - closed
-      - synchronize
-    branches:
-      # Meant for running after PR merged on master
-      - master
+  # push:
+  #   branches:
+  #     # Meant for NETxxyy-* tickets
+  #     - feature/*
+  #     # Meant for DEVOPS-* tickets
+  #     - hotfix/*
+  # pull_request:
+  #   types:
+  #     - closed
+  #     - synchronize
+  #   branches:
+  #     # Meant for running after PR merged on master
+  #     - master
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
 jobs:
   # This is the actual calling job that calls the reusable workflow - to push image into Docker Artifactory Repo.
   call_pyaction:
-    uses: varun-charan/pyaction@v0.2.0
-    with:
-      devops_version: v0.2.0
-      index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-      command: "exec"
-      args: "python3 --version"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Call pyaction
+      uses: varun-charan/pyaction@v0.2.0
+      with:
+        devops_version: v0.2.0
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+        command: "exec"
+        args: "python3 --version"
       
       
