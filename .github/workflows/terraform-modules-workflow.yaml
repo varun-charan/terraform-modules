@@ -52,6 +52,7 @@ jobs:
     needs: [ non_exec_command ]
     steps:
       - name: Debug
+        shell: bash
         run: |
           echo "non_exec_cmd output: " ${{ needs.non_exec_command.outputs.stdout }}
 
@@ -60,6 +61,7 @@ jobs:
     needs: [ non_exec_command ]
     steps:
       - name: Test if pyaction vault command returned correct output
+        shell: bash
         run: |
           curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
         env:
