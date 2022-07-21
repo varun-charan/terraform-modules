@@ -37,7 +37,7 @@ jobs:
       id: pyaction_non_exec_cmd
       uses: varun-charan/pyaction@feature/add-vault-functionality
       with:
-        devops_version: v0.4.0-varun-charan-786fdf49556fdd9ef06eb8fc65a0e45717d4b6a3.0
+        devops_version: v0.4.0-varun-charan-968f91988adde92c7ce16f1eb1aa7952d14ecea6.0
         index_url_pip: ${{ secrets.INDEX_URL_PIP_DEV }}
         command: "vault"
         subcommand: "get"
