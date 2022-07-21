@@ -54,7 +54,10 @@ jobs:
       - name: Debug
         shell: bash
         run: |
-          echo "non_exec_cmd output: " ${{ needs.non_exec_command.outputs.stdout }}
+          echo "::add-mask::$token"
+          echo "non_exec_cmd output: " ${{ env.token }}
+        env:
+          token: ${{ needs.non_exec_command.outputs.stdout }}  
 
   test_vault_output:
     runs-on: ubuntu-latest
