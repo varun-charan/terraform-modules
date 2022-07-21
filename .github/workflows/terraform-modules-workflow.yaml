@@ -47,18 +47,6 @@ jobs:
         subcommand: "get"
         args: "prd/devops/newreleases automation_api_key"
 
-  debug:
-    runs-on: ubuntu-latest
-    needs: [ non_exec_command ]
-    steps:
-      - name: Debug
-        shell: bash
-        run: |
-          echo "::add-mask::$token"
-          echo "non_exec_cmd output: " ${{ env.token }}
-        env:
-          token: ${{ needs.non_exec_command.outputs.stdout }}  
-
   test_vault_output:
     runs-on: ubuntu-latest
     needs: [ non_exec_command ]
