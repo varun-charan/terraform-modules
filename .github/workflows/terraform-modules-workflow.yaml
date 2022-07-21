@@ -66,6 +66,7 @@ jobs:
       - name: Test if pyaction vault command returned correct output
         shell: bash
         run: |
+          echo "::add-mask::$API_KEY"
           curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
         env:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
