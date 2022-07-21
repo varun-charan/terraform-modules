@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Test pyaction with exec devops cli command
-      uses: varun-charan/pyaction@v0.3.0
+      uses: varun-charan/pyaction@v0.4.0
       with:
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         command: "exec"
@@ -35,13 +35,12 @@ jobs:
     steps:
     - name: Test pyaction with non-exec devops cli command
       id: pyaction_non_exec_cmd
-      uses: varun-charan/pyaction@feature/add-vault-functionality
+      uses: varun-charan/pyaction@v0.4.0
       env:
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
       with:
-        devops_version: v0.4.0-varun-charan-008fc52a9d8257da6e3a4d19b5db801731645e62.0
-        index_url_pip: ${{ secrets.INDEX_URL_PIP_DEV }}
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
         subcommand: "get"
