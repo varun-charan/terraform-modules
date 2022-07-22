@@ -11,7 +11,7 @@ locals {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
-  acl = "public"
+  acl = "private"
 
   # indicates that all objects (including any locked objects) should be deleted from the bucket
   # so that the bucket can be destroyed without error.
