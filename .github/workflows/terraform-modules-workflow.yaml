@@ -62,6 +62,7 @@ jobs:
     permissions:
       # required for all workflows
       security-events: write
+      contents: read
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@feature/add-security-scan-reusable-workflow
     with:
       generate_sarif: true
