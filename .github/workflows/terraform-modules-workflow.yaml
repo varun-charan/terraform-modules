@@ -57,3 +57,14 @@ jobs:
           curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
         env:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
+
+  perform_security_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call security scan workflow
+        uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@feature/add-security-scan-reusable-workflow
+        with:
+          generate_sarif: true
+          severity: high
+        secrets:
+          snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
