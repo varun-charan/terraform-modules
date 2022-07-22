@@ -57,3 +57,14 @@ jobs:
           curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
         env:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
+
+  perform_security_scan:
+    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
+    with:
+      upload_sarif: true
+      severity: "low"
+      terrascan_iac_type: "terraform"
+      terrascan_iac_version: "v15"
+      terrascan_iac_dir: aws-tfstate-bucket
+    secrets:
+      snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
