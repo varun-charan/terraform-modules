@@ -63,5 +63,8 @@ jobs:
     with:
       upload_sarif: true
       severity: "low"
+      terrascan_iac_type: "terraform"
+      terrascan_iac_version: "v15"
+      terrascan_iac_dir: aws-tfstate-bucket
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
