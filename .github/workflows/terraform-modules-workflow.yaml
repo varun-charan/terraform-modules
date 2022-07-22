@@ -59,6 +59,9 @@ jobs:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
   perform_security_scan:
+    permissions:
+      # required for all workflows
+      security-events: write
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@feature/add-security-scan-reusable-workflow
     with:
       generate_sarif: true
