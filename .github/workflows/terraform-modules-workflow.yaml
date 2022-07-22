@@ -59,7 +59,7 @@ jobs:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
   perform_security_scan:
-    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@feature/add-security-scan-reusable-workflow
+    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
       upload_sarif: true
       severity: "low"
