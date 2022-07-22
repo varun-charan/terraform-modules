@@ -62,6 +62,6 @@ jobs:
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@feature/add-security-scan-reusable-workflow
     with:
       generate_sarif: true
-      severity: high
+      severity: "high"
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
