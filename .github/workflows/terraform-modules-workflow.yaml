@@ -18,6 +18,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  get_target_modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get target TF modules
+        shell: bash
+        run: |
+          TARGET_TF_MODULES=`git diff --dirstat=files,0 feature/create-terraform-cicd origin/master | sed -E 's/^[ 0-9.]+% //g' | uniq | sort`
+
   exec_command:
     runs-on: ubuntu-latest
     steps:
