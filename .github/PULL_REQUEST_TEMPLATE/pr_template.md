@@ -6,6 +6,7 @@
 **Special notes for your reviewers**:
 
 **Select one or more, if applicable**:
-- [ ] this PR contains documentation
-- [ ] this PR contains unit tests
-- [ ] this PR has been tested for backwards compatibility
+- [ ] Latest workflow run is successful
+- [ ] This PR contains bumped terraform module version
+- [ ] This PR contains link to GitHub/Jira/ServiceDesk Issue
+- [ ] This PR contains documentation
