@@ -80,7 +80,7 @@ jobs:
         id: get_target_tf_modules
         shell: bash
         run: |
-          TARGET_TF_MODULES=`git diff --dirstat=files,0 $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+          TARGET_TF_MODULES=`git diff --dirstat=files,0 $GITHUB_REF_NAME master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
           echo '::set-output name=tf_modules::TARGET_TF_MODULES'
   
   echo_strategy_matrix:
