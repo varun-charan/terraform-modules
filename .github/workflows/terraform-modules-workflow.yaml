@@ -26,14 +26,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  get_target_modules:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get target TF modules
-        shell: bash
-        run: |
-          TARGET_TF_MODULES=`git diff --dirstat=files,0 feature/create-terraform-cicd origin/master | sed -E 's/^[ 0-9.]+% //g' | uniq | sort`
-
+  # U S I N G   P Y A C T I O N
   exec_command:
     runs-on: ubuntu-latest
     steps:
@@ -74,13 +67,30 @@ jobs:
         env:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
+  # T E R R A F O R M   C I C D 
+  get_target_modules:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+    steps:
+      - name: Get target TF modules
+        id: get_target_tf_modules
+        shell: bash
+        run: |
+          TARGET_TF_MODULES=`git diff --dirstat=files,0 feature/create-terraform-cicd origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+          echo '::set-output name=tf_modules::TARGET_TF_MODULES'
+
   perform_security_scan:
+    needs: [ get_target_tf_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
+    strategy:
+      matrix:
+        value: ${{ fromJson(needs.get_target_tf_modules.outputs.matrix) }}
     with:
       upload_sarif: true
       severity: "low"
       terrascan_iac_type: "terraform"
       terrascan_iac_version: "v15"
-      terrascan_iac_dir: aws-tfstate-bucket
+      terrascan_iac_dir: ${{ matrix.tf_modules }}
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}

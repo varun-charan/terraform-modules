@@ -1,4 +1,4 @@
-description: Creates buckets to hold  terraform state files. Intended for use only in the barco-infra account
+description: Creates buckets to hold  terraform state files.
 name: aws-tfstate-bucket
 version: 1.0.1
 
