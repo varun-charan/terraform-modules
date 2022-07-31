@@ -84,9 +84,9 @@ jobs:
 
           TARGET_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
 
-          echo $TARGET_TF_MODULES
-
-          echo "::set-output name=tf_modules::($TARGET_TF_MODULES)"
+          TARGETS_LIST=($TARGET_TF_MODULES)
+          
+          echo "::set-output name=tf_modules::($TARGETS_LIST)"
   
   echo_strategy_matrix:
     runs-on: ubuntu-latest
