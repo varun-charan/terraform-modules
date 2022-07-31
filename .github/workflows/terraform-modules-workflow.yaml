@@ -86,7 +86,7 @@ jobs:
 
           TARGETS_LIST=($TARGET_TF_MODULES)
 
-          echo $TARGETS_LIST
+          for i in ${TARGETS_LIST[@]}; do echo $i; done
 
           echo "::set-output name=tf_modules::$TARGETS_LIST"
   
@@ -95,7 +95,7 @@ jobs:
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        value: ${{ fromJson(needs.get_target_modules.outputs.matrix) }}
+        value: ${{ needs.get_target_modules.outputs.matrix }}
     steps:
       - name: Debug
         shell: bash
