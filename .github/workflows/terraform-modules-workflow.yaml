@@ -71,7 +71,7 @@ jobs:
   get_target_modules:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+      tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
     steps:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
@@ -88,19 +88,21 @@ jobs:
 
           for i in ${TARGETS_LIST[@]}; do echo $i; done
 
-          echo "::set-output name=tf_modules::$TARGETS_LIST"
+          JSON_LIST = '${{ toJSON($TARGETS_LIST) }}'
+
+          echo "::set-output name=tf_modules::${JSON_LIST}"
   
   echo_strategy_matrix:
     runs-on: ubuntu-latest
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        value: ${{ needs.get_target_modules.outputs.matrix }}
+        tf_module: ${{ fromJSON(needs.get_target_modules.outputs.tf_modules) }}
     steps:
       - name: Debug
         shell: bash
         run: |
-          echo ${{ matrix.value }}
+          echo ${{ matrix.tf_module }}
 
   # perform_security_scan:
   #   needs: [ get_target_tf_modules ]
