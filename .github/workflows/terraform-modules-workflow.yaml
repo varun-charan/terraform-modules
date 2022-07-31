@@ -86,6 +86,8 @@ jobs:
 
           TARGETS_LIST=($TARGET_TF_MODULES)
 
+          echo $TARGETS_LIST
+
           echo "::set-output name=tf_modules::$TARGETS_LIST"
   
   echo_strategy_matrix:
@@ -98,7 +100,7 @@ jobs:
       - name: Debug
         shell: bash
         run: |
-          echo ${{ matrix.tf_modules }}
+          echo ${{ matrix.value }}
 
   # perform_security_scan:
   #   needs: [ get_target_tf_modules ]
