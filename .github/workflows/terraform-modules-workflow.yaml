@@ -86,7 +86,7 @@ jobs:
 
           echo $TARGET_TF_MODULES
 
-          echo "::set-output name=tf_modules::$TARGET_TF_MODULES"
+          echo "::set-output name=tf_modules::($TARGET_TF_MODULES)"
   
   echo_strategy_matrix:
     runs-on: ubuntu-latest
