@@ -86,7 +86,7 @@ jobs:
 
           echo "${TARGET_TF_MODULES}"
 
-          TF_TARGETS=$(printf '['; for i in ${TARGET_TF_MODULES[@]}; do printf '%s,' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
+          TF_TARGETS=$(printf '['; for i in ${TARGET_TF_MODULES[@]}; do printf ' %s, ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
 
           # TF_TARGETS=${TARGET_TF_MODULES}
           # TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
@@ -117,7 +117,7 @@ jobs:
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        tf_module: "${{ needs.get_target_modules.outputs.tf_modules }}"
+        tf_module: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
     steps:
       - name: Debug
         run: |
