@@ -88,9 +88,7 @@ jobs:
 
           for i in ${TARGETS_LIST[@]}; do echo $i; done
 
-          JSON_LIST = ${{ toJSON(${TARGETS_LIST}) }}
-
-          echo "::set-output name=tf_modules::${JSON_LIST}"
+          echo "::set-output name=tf_modules::${TARGETS_LIST}"
   
   echo_strategy_matrix:
     runs-on: ubuntu-latest
