@@ -90,6 +90,8 @@ jobs:
           TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
           TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
           TF_TARGETS="${TF_TARGETS//$'\r'/'%0D'}"
+          echo "${TF_TARGETS}"
+          
           echo "::set-output name=tf_modules::$TF_TARGETS"
 
       - name: Dump steps context
