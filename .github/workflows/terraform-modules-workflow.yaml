@@ -86,7 +86,7 @@ jobs:
 
           echo "${TARGET_TF_MODULES}"
 
-          echo "::set-output name=tf_modules::${TARGET_TF_MODULES}"
+          echo "::set-output name=tf_modules::$(git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort)"
 
       - name: Dump steps context
         env:
@@ -98,12 +98,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ get_target_modules ]
     env:
-      TF_TARGETS: ${{ needs.get_target_modules.outputs.tf_modules }}
+      TF_TARGETS: ${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}
     steps:
       - name: Debug
         shell: bash
         run: |
           echo "$TF_TARGETS"
+          echo ${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}
 
   echo_strategy_matrix:
     runs-on: ubuntu-latest
@@ -113,7 +114,6 @@ jobs:
         tf_module: ${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}
     steps:
       - name: Debug
-        shell: bash
         run: |
           echo ${{ matrix.tf_module }}
 
