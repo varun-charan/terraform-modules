@@ -107,14 +107,14 @@ jobs:
         run: |
           echo "${{ matrix.tf_module }}"
 
-  perform_security_scan:
-    needs: [ get_target_modules ]
-    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@add-multiple-tf-mods-support
-    with:
-      upload_sarif: true
-      target_dirs: "${{ needs.get_target_modules.outputs.tf_modules }}"
-      severity: "low"
-      terrascan_iac_type: "terraform"
-      terrascan_iac_version: "v15"
-    secrets:
-      snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
+  # perform_security_scan:
+  #   needs: [ get_target_modules ]
+  #   uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@add-multiple-tf-mods-support
+  #   with:
+  #     upload_sarif: true
+  #     target_dirs: "${{ needs.get_target_modules.outputs.tf_modules }}"
+  #     severity: "low"
+  #     terrascan_iac_type: "terraform"
+  #     terrascan_iac_version: "v15"
+  #   secrets:
+  #     snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
