@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ get_target_modules ]
     env:
-      TF_TARGETS: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
+      TF_TARGETS: "${{ needs.get_target_modules.outputs.tf_modules }}"
     steps:
       - name: Debug
         run: |
