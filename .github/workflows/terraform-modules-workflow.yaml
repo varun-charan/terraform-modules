@@ -86,10 +86,11 @@ jobs:
 
           TARGETS_LIST=($TARGET_TF_MODULES)
 
-          for i in ${TARGETS_LIST[@]}; do echo $i; done
-          echo
-
-          echo '::set-output name=tf_modules::${{ toJSON($TARGET_TF_MODULES) }}'
+          TF_TARGETS=$(TARGET_TF_MODULES)
+          TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
+          TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
+          TF_TARGETS="${TF_TARGETS//$'\r'/'%0D'}"
+          echo "::set-output name=tf_modules::$TF_TARGETS"
 
       - name: Dump steps context
         env:
