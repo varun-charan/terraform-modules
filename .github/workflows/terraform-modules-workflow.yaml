@@ -98,6 +98,8 @@ jobs:
         shell: bash
         run: |
           echo ${{ needs.get_target_modules.outputs.tf_modules }}
+          echo
+          for i in ${{ needs.get_target_modules.outputs.tf_modules }}; do echo $i; done
 
   echo_strategy_matrix:
     runs-on: ubuntu-latest
