@@ -87,8 +87,14 @@ jobs:
           TARGETS_LIST=($TARGET_TF_MODULES)
 
           for i in ${TARGETS_LIST[@]}; do echo $i; done
+          echo
 
-          echo "::set-output name=tf_modules::`for i in ${TARGETS_LIST[@]}; do echo $i; done`"
+          echo "::set-output name=tf_modules::${TARGETS_LIST}"
+
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
   
   debug:
     runs-on: ubuntu-latest
