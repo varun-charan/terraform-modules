@@ -97,8 +97,10 @@ jobs:
       - name: Dump steps context
         env:
           STEPS_CONTEXT: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+          MY_JSON: ${{ join(steps.get_target_tf_modules.outputs.tf_modules, ',') }}
         run: |
           echo "$STEPS_CONTEXT"
+          echo "$MY_JSON"
 
   debug:
     runs-on: ubuntu-latest
@@ -109,7 +111,6 @@ jobs:
       - name: Debug
         run: |
           echo "$TF_TARGETS"
-          for i in ${TF_TARGETS[@]}; do echo $i; done
 
   echo_strategy_matrix:
     runs-on: ubuntu-latest
