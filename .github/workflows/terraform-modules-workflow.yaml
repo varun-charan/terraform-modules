@@ -84,11 +84,9 @@ jobs:
 
           TARGET_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
 
-          TF_TARGETS=${TARGET_TF_MODULES}
-          TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
-          TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
-          TF_TARGETS="${TF_TARGETS//$'\r'/'%0D'}"
-          echo "::set-output name=tf_modules::$TF_TARGETS"
+          echo "${TARGET_TF_MODULES}"
+
+          echo "::set-output name=tf_modules::${TARGET_TF_MODULES}"
 
       - name: Dump steps context
         env:
@@ -112,7 +110,7 @@ jobs:
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        tf_module: ${{ fromJSON(needs.get_target_modules.outputs.tf_modules) }}
+        tf_module: ${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}
     steps:
       - name: Debug
         shell: bash
