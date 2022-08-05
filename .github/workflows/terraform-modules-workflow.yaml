@@ -109,6 +109,7 @@ jobs:
       - name: Debug
         run: |
           echo "$TF_TARGETS"
+          for i in ${TF_TARGETS[@]}; do echo $i; done
 
   echo_strategy_matrix:
     runs-on: ubuntu-latest
