@@ -89,7 +89,7 @@ jobs:
           for i in ${TARGETS_LIST[@]}; do echo $i; done
           echo
 
-          echo "::set-output name=tf_modules::${TARGETS_LIST}"
+          echo "::set-output name=tf_modules::${TARGET_TF_MODULES}"
 
       - name: Dump steps context
         env:
