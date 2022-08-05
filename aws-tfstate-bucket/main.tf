@@ -1,7 +1,7 @@
 locals {
   tags = {
     squad = "devops"
-    env = "prd",
+    env = "dev",
     heritage = "tf",
     src = "terraform-modules/aws-tfstate-bucket",
     Name = var.bucket_name,

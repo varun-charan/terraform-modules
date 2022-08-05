@@ -7,6 +7,10 @@ on:
       - feature/*
       # Meant for DEVOPS-* tickets
       - hotfix/*
+    # DO NOT trigger workflow run on updates to templates
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
   pull_request:
     types:
       - closed
@@ -14,10 +18,15 @@ on:
     branches:
       # Meant for running after PR merged on master
       - master
+    # DO NOT trigger workflow run on updates to templates
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
 jobs:
+  # U S I N G   P Y A C T I O N
   exec_command:
     runs-on: ubuntu-latest
     steps:
@@ -58,13 +67,35 @@ jobs:
         env:
           API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
+  # T E R R A F O R M   C I C D 
+  get_target_modules:
+    runs-on: ubuntu-latest
+    outputs:
+      tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+    steps:
+      - name: Checkout application GitHub repo
+        uses: actions/checkout@v3
+      
+      - name: Get target TF modules
+        id: get_target_tf_modules
+        shell: bash
+        run: |
+          git fetch origin master
+
+          CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+
+          CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
+
+          echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
+
   perform_security_scan:
+    needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
       upload_sarif: true
+      target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
       severity: "low"
       terrascan_iac_type: "terraform"
       terrascan_iac_version: "v15"
-      terrascan_iac_dir: aws-tfstate-bucket
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
