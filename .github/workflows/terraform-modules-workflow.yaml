@@ -83,7 +83,7 @@ jobs:
           git fetch origin master
 
           TARGET_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
-          
+
           TF_TARGETS=${TARGET_TF_MODULES}
           TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
           TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
@@ -92,7 +92,7 @@ jobs:
 
       - name: Dump steps context
         env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
+          STEPS_CONTEXT: ${{ toJson(steps.get_target_tf_modules.outputs.tf_modules) }}
         run: echo "$STEPS_CONTEXT"
   
   debug:
