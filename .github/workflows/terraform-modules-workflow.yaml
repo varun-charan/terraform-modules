@@ -92,8 +92,10 @@ jobs:
 
       - name: Dump steps context
         env:
-          STEPS_CONTEXT: ${{ toJson(steps.get_target_tf_modules.outputs.tf_modules) }}
-        run: echo "$STEPS_CONTEXT"
+          STEPS_CONTEXT: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+        run: |
+          echo "$STEPS_CONTEXT"
+
   
   debug:
     runs-on: ubuntu-latest
