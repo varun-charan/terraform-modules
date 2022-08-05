@@ -101,15 +101,12 @@ jobs:
 
   perform_security_scan:
     needs: [ get_target_modules ]
-    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
-    strategy:
-      matrix:
-        tf_module: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
+    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@add-multiple-tf-mods-support
     with:
       upload_sarif: true
+      target_dirs: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
       severity: "low"
       terrascan_iac_type: "terraform"
       terrascan_iac_version: "v15"
-      terrascan_iac_dir: ${{ matrix.tf_module }}
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
