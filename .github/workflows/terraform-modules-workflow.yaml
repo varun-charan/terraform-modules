@@ -86,21 +86,21 @@ jobs:
 
           echo "${TARGET_TF_MODULES}"
 
-          TF_TARGETS=${TARGET_TF_MODULES}
-          TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
-          TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
-          TF_TARGETS="${TF_TARGETS//$'\r'/'%0D'}"
-          echo "${TF_TARGETS}"
-          
+          for i in ${TARGET_TF_MODULES[@]}; do printf '\"$i\"'; done
+
+          # TF_TARGETS=${TARGET_TF_MODULES}
+          # TF_TARGETS="${TF_TARGETS//'%'/'%25'}"
+          # TF_TARGETS="${TF_TARGETS//$'\n'/'%0A'}"
+          # TF_TARGETS="${TF_TARGETS//$'\r'/'%0D'}"
+          # echo "${TF_TARGETS}"
+
           echo "::set-output name=tf_modules::$TF_TARGETS"
 
       - name: Dump steps context
         env:
           STEPS_CONTEXT: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
-          MY_JSON: ${{ join(steps.get_target_tf_modules.outputs.tf_modules, ',') }}
         run: |
           echo "$STEPS_CONTEXT"
-          echo "$MY_JSON"
 
   debug:
     runs-on: ubuntu-latest
@@ -117,7 +117,8 @@ jobs:
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        tf_module: "${{ needs.get_target_modules.outputs.tf_modules }}"
+        # tf_module: "${{ needs.get_target_modules.outputs.tf_modules }}"
+        tf_module: [aws-tfstate-bucket,loganalytics-workspace]
     steps:
       - name: Debug
         run: |
