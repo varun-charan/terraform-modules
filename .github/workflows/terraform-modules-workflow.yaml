@@ -112,7 +112,7 @@ jobs:
     needs: [ get_target_modules ]
     strategy:
       matrix:
-        tf_module: ${{ needs.get_target_modules.outputs.tf_modules }}
+        tf_module: ${{ fromJSON(needs.get_target_modules.outputs.tf_modules) }}
     steps:
       - name: Debug
         shell: bash
