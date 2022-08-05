@@ -109,7 +109,7 @@ jobs:
       - name: Debug
         run: |
           echo "$TF_TARGETS"
-          echo "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
+          echo "${{ needs.get_target_modules.outputs.tf_modules }}"
 
   echo_strategy_matrix:
     runs-on: ubuntu-latest
