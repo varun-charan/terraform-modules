@@ -154,6 +154,7 @@ jobs:
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
       with:
+        devops_version: "v0.5.0"
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
@@ -167,6 +168,7 @@ jobs:
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
       with:
+        devops_version: "v0.5.0"
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
