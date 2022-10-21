@@ -182,11 +182,9 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
       id: plan
       run: |
-        echo ${{ steps.aws_access_key_id.outputs.stdout }}
-        echo ${{ env.AWS_ACCESS_KEY_ID }}
         export AWS_ACCESS_KEY_ID='${{ env.AWS_ACCESS_KEY_ID }}'
         export AWS_SECRET_ACCESS_KEY='${{ env.AWS_SECRET_ACCESS_KEY }}'
-        terraform -chdir=${{ matrix.TF_MODULE }} plan
+        terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
       continue-on-error: false
 
   perform_security_scan:
