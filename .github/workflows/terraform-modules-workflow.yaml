@@ -82,9 +82,23 @@ jobs:
         run: |
           git fetch origin master
 
-          CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+          if [ -z `git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | grep -v .github` ]; then
+            CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
-          CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
+            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
+          else
+            CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+
+            echo "TF Modules: " $CHANGED_TF_MODULES
+
+            if [ -z "$CHANGED_TF_MODULES" ]; then
+              CHANGED_TF_MODULES_JSON=$(printf '[]\n')
+            else
+              CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
+            fi
+
+            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
+          fi
 
           echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
