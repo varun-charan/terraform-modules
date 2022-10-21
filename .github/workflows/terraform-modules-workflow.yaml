@@ -103,10 +103,11 @@ jobs:
           echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
   static-analysis:
+    needs: [ get_target_modules ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        TF_MODULE: "${{ fromJson(inputs.target_dirs) }}"
+        TF_MODULE: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
     steps:
     - name: Checkout application GitHub repo
       uses: actions/checkout@v3
