@@ -136,16 +136,16 @@ jobs:
     #     path: ~/.tflint.d/plugins
     #     key: tflint-${{ hashFiles('.tflint.hcl') }}
     
-    - name: Setup TFLint
-      uses: terraform-linters/setup-tflint@v2
-      with:
-        tflint_version: v0.38.1
+    # - name: Setup TFLint
+    #   uses: terraform-linters/setup-tflint@v2
+    #   with:
+    #     tflint_version: v0.38.1
 
-    - name: Init TFLint
-      run: tflint --init
+    # - name: Init TFLint
+    #   run: tflint --init
 
-    - name: Run TFLint
-      run: tflint -chdir=${{ matrix.TF_MODULE }}
+    # - name: Run TFLint
+    #   run: tflint -chdir=${{ matrix.TF_MODULE }}
 
     - name: Terraform Plan
       id: plan
