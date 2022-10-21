@@ -147,9 +147,41 @@ jobs:
     # - name: Run TFLint
     #   run: tflint -chdir=${{ matrix.TF_MODULE }}
 
+    - name: Get AWS Access Key ID
+      id: aws_access_key_id
+      uses: varun-charan/pyaction@v0.4.0
+      env:
+        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      with:
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+        command: "vault"
+        subcommand: "get"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
+    
+    - name: Get AWS Secret Access Key
+      id: aws_secret_access_key
+      uses: varun-charan/pyaction@v0.4.0
+      env:
+        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      with:
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+        command: "vault"
+        subcommand: "get"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
+
     - name: Terraform Plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ needs.aws_access_key_id.outputs.stdout }}
+        AWS_SECRET_ACCESS_KEY: ${{ needs.aws_secret_access_key.outputs.stdout }}
       id: plan
-      run: terraform -chdir=${{ matrix.TF_MODULE }} plan
+      run: |
+        export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+        terraform -chdir=${{ matrix.TF_MODULE }} plan
       continue-on-error: false
 
   perform_security_scan:
