@@ -116,6 +116,7 @@ jobs:
 
   perform_security_scan:
     needs: [ get_target_modules ]
+    if: toJSON(needs.get_target_modules.outputs.tf_modules) != "[]"
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
       upload_sarif: true
