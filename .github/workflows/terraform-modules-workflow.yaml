@@ -84,8 +84,15 @@ jobs:
 
           CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
 
+          echo "TF Modules: " $CHANGED_TF_MODULES
+
+          # if [ -z "$CHANGED_TF_MODULES" ]; then
+          # fi
+
           CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
 
+          echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
+          
           echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
   perform_security_scan:
