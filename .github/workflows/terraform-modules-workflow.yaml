@@ -102,6 +102,54 @@ jobs:
 
           echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
+  static-analysis:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        TF_MODULE: "${{ fromJson(inputs.target_dirs) }}"
+    steps:
+    - name: Checkout application GitHub repo
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform  
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.0.11
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform -chdir=${{ matrix.TF_MODULE }} fmt -check
+
+    - name: Terraform Init
+      id: init
+      run: terraform -chdir=${{ matrix.TF_MODULE }} init
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform -chdir=${{ matrix.TF_MODULE }} validate
+
+    # - uses: actions/cache@v2
+    #   name: Cache plugin dir
+    #   with:
+    #     path: ~/.tflint.d/plugins
+    #     key: tflint-${{ hashFiles('.tflint.hcl') }}
+    
+    # - name: Setup TFLint
+    #   uses: terraform-linters/setup-tflint@v2
+    #   with:
+    #     tflint_version: v0.38.1
+
+    # - name: Init TFLint
+    #   run: tflint --init
+
+    # - name: Run TFLint
+    #   run: tflint -chdir=${{ matrix.TF_MODULE }}
+
+    # - name: Terraform Plan
+    #   id: plan
+    #   run: terraform -chdir=${{ matrix.TF_MODULE }} plan
+    #   continue-on-error: false
+
   perform_security_scan:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
