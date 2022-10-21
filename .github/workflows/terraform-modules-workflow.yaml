@@ -116,8 +116,7 @@ jobs:
 
   perform_security_scan:
     needs: [ get_target_modules ]
-    if: toJSON(needs.get_target_modules.outputs.tf_modules) != '{}'
-    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
+    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@skip-sec-scans-if-no-target-modules
     with:
       upload_sarif: true
       target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
