@@ -178,11 +178,11 @@ jobs:
 
     - name: Terraform Plan
       env:
-        AWS_ACCESS_KEY_ID: ${{ needs.aws_access_key_id.outputs.stdout }}
-        AWS_SECRET_ACCESS_KEY: ${{ needs.aws_secret_access_key.outputs.stdout }}
+        AWS_ACCESS_KEY_ID: ${{ steps.aws_access_key_id.outputs.stdout }}
+        AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
       id: plan
       run: |
-        echo ${{ needs.aws_access_key_id.outputs.stdout }}
+        echo ${{ steps.aws_access_key_id.outputs.stdout }}
         echo ${{ env.AWS_ACCESS_KEY_ID }}
         export AWS_ACCESS_KEY_ID='${{ env.AWS_ACCESS_KEY_ID }}'
         export AWS_SECRET_ACCESS_KEY='${{ env.AWS_SECRET_ACCESS_KEY }}'
