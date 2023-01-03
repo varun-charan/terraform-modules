@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Test pyaction with exec devops cli command
-      uses: varun-charan/pyaction@v0.4.0
+      uses: varun-charan/pyaction@v0.5.0
       with:
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         command: "exec"
@@ -44,11 +44,12 @@ jobs:
     steps:
     - name: Test pyaction with non-exec devops cli command
       id: pyaction_non_exec_cmd
-      uses: varun-charan/pyaction@v0.4.0
+      uses: varun-charan/pyaction@v0.5.0
       env:
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
       with:
+        devops_version: "v0.5.0"
         index_url_pip: ${{ secrets.INDEX_URL_PIP }}
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
@@ -101,6 +102,92 @@ jobs:
           fi
 
           echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
+
+  static-analysis:
+    needs: [ get_target_modules ]
+    runs-on: ubuntu-latest
+    if: needs.get_target_modules.outputs.tf_modules != '[]'
+    strategy:
+      matrix:
+        TF_MODULE: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
+    steps:
+    - name: Checkout application GitHub repo
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform  
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.0.11
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform -chdir=${{ matrix.TF_MODULE }} fmt -check
+
+    - name: Terraform Init
+      id: init
+      run: terraform -chdir=${{ matrix.TF_MODULE }} init
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform -chdir=${{ matrix.TF_MODULE }} validate
+
+    # - uses: actions/cache@v2
+    #   name: Cache plugin dir
+    #   with:
+    #     path: ~/.tflint.d/plugins
+    #     key: tflint-${{ hashFiles('.tflint.hcl') }}
+    
+    # - name: Setup TFLint
+    #   uses: terraform-linters/setup-tflint@v2
+    #   with:
+    #     tflint_version: v0.38.1
+
+    # - name: Init TFLint
+    #   run: tflint --init
+
+    # - name: Run TFLint
+    #   run: tflint -chdir=${{ matrix.TF_MODULE }}
+
+    - name: Get AWS Access Key ID
+      id: aws_access_key_id
+      uses: varun-charan/pyaction@v0.5.0
+      env:
+        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      with:
+        devops_version: "v0.5.0"
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+        command: "vault"
+        subcommand: "get"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
+    
+    - name: Get AWS Secret Access Key
+      id: aws_secret_access_key
+      uses: varun-charan/pyaction@v0.5.0
+      env:
+        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      with:
+        devops_version: "v0.5.0"
+        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+        command: "vault"
+        subcommand: "get"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
+
+    - name: Terraform Plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ steps.aws_access_key_id.outputs.stdout }}
+        AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
+      id: plan
+      run: |
+        echo "::add-mask::$AWS_ACCESS_KEY_ID"
+        echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
+        export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+        terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
+      continue-on-error: false
 
   perform_security_scan:
     needs: [ get_target_modules ]
