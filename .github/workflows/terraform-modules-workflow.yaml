@@ -182,6 +182,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
       id: plan
       run: |
+        echo "::add-mask::$AWS_ACCESS_KEY_ID"
+        echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
         export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
         export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
         terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
