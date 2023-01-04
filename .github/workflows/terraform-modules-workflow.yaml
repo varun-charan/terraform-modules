@@ -207,7 +207,7 @@ jobs:
 
   calculate_infra_cost:
     needs: [ get_target_modules ]
-    uses: varun-charan/reusable-workflows/.github/workflows/calculate-infracost.yaml@feature/add-infracost-support
+    uses: varun-charan/reusable-workflows/.github/workflows/calculate-infracost.yaml@master
     with:
       target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
     secrets:
