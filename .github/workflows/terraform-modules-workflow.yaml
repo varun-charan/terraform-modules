@@ -160,7 +160,7 @@ jobs:
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
         subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-infra AWS_ACCESS_KEY_ID"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
     
     - name: Get AWS Secret Access Key
       id: aws_secret_access_key
@@ -174,7 +174,12 @@ jobs:
         export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
         command: "vault"
         subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-infra AWS_SECRET_ACCESS_KEY"
+        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
+
+    - name: debug
+      run: |
+        echo "::debug:: ${{ steps.aws_access_key_id.outputs.stdout }}"
+        echo "::debug:: ${{ steps.aws_secret_access_key.outputs.stdout }}"
 
     - name: Terraform Plan
       env:
