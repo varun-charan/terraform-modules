@@ -78,12 +78,6 @@ jobs:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
 
-      - name: Get correct branch name in case of push or pull_request events
-        id: branch-name
-        uses: tj-actions/branch-names@v6
-
-      - run: echo "BRANCH_NAME=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_ENV
-      
       - name: Get target TF modules
         id: get_target_tf_modules
         shell: bash
