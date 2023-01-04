@@ -16,6 +16,7 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
     branches:
       # Meant for running after PR merged on master
       - master
