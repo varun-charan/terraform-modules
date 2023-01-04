@@ -7,6 +7,7 @@ on:
       - feature/*
       # Meant for DEVOPS-* tickets
       - hotfix/*
+      - master
     # DO NOT trigger workflow run on updates to templates
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
@@ -15,8 +16,6 @@ on:
   pull_request:
     types:
       - opened
-      - closed
-      - synchronize
     branches:
       # Meant for running after PR merged on master
       - master
@@ -81,6 +80,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Get target TF modules
+        if: ${{ github.event_name != 'pull_request' }}
         id: get_target_tf_modules
         shell: bash
         run: |
@@ -92,6 +92,33 @@ jobs:
             echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
           else
             CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_REF_NAME origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+
+            echo "TF Modules: " $CHANGED_TF_MODULES
+
+            if [ -z "$CHANGED_TF_MODULES" ]; then
+              CHANGED_TF_MODULES_JSON=$(printf '[]\n')
+            else
+              CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
+            fi
+
+            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
+          fi
+
+          echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
+
+      - name: Get target TF modules
+        id: get_target_tf_modules
+        shell: bash
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git fetch origin master
+
+          if [ -z `git diff --dirstat=files,0 --name-only $GITHUB_HEAD_REF origin/master | grep -v .github` ]; then
+            CHANGED_TF_MODULES_JSON=$(printf '[]\n')
+
+            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
+          else
+            CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $GITHUB_HEAD_REF origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
 
             echo "TF Modules: " $CHANGED_TF_MODULES
 
