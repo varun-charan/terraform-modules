@@ -27,47 +27,47 @@ on:
   workflow_dispatch:
 
 jobs:
-  # U S I N G   P Y A C T I O N
-  exec_command:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Test pyaction with exec devops cli command
-      uses: varun-charan/pyaction@v0.5.0
-      with:
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        command: "exec"
-        args: "python3 --version"
+  # # U S I N G   P Y A C T I O N
+  # exec_command:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Test pyaction with exec devops cli command
+  #     uses: varun-charan/pyaction@v0.5.0
+  #     with:
+  #       index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+  #       command: "exec"
+  #       args: "python3 --version"
   
-  non_exec_command:
-    runs-on: ubuntu-latest
-    outputs:
-      stdout: ${{ steps.pyaction_non_exec_cmd.outputs.stdout }}
-    steps:
-    - name: Test pyaction with non-exec devops cli command
-      id: pyaction_non_exec_cmd
-      uses: varun-charan/pyaction@v0.5.0
-      env:
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        devops_version: "v0.5.0"
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
-        command: "vault"
-        subcommand: "get"
-        args: "prd/devops/newreleases automation_api_key"
+  # non_exec_command:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     stdout: ${{ steps.pyaction_non_exec_cmd.outputs.stdout }}
+  #   steps:
+  #   - name: Test pyaction with non-exec devops cli command
+  #     id: pyaction_non_exec_cmd
+  #     uses: varun-charan/pyaction@v0.5.0
+  #     env:
+  #       VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+  #       VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+  #     with:
+  #       devops_version: "v0.5.0"
+  #       index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+  #       export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+  #       command: "vault"
+  #       subcommand: "get"
+  #       args: "prd/devops/newreleases automation_api_key"
 
-  test_vault_output:
-    runs-on: ubuntu-latest
-    needs: [ non_exec_command ]
-    steps:
-      - name: Test if pyaction vault command returned correct output
-        shell: bash
-        run: |
-          echo "::add-mask::$API_KEY"
-          curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
-        env:
-          API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
+  # test_vault_output:
+  #   runs-on: ubuntu-latest
+  #   needs: [ non_exec_command ]
+  #   steps:
+  #     - name: Test if pyaction vault command returned correct output
+  #       shell: bash
+  #       run: |
+  #         echo "::add-mask::$API_KEY"
+  #         curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
+  #       env:
+  #         API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
   # T E R R A F O R M   C I C D 
   get_target_modules:
