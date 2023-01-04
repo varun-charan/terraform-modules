@@ -93,39 +93,3 @@ resource "aws_s3_bucket_policy" "state" {
     }
   )
 }
-
-resource "aws_s3_bucket" "bucket-two" {
-  bucket = "${var.bucket_name}-two"
-  acl    = "private"
-
-  # indicates that all objects (including any locked objects) should be deleted from the bucket
-  # so that the bucket can be destroyed without error.
-  force_destroy = true
-  tags          = local.tags
-
-  versioning {
-    enabled = false
-  }
-
-  // use standard S3 encryption at rest
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  lifecycle_rule {
-    id      = "delete-outdated"
-    enabled = true
-
-    prefix = ""
-
-    # I would prefer to keep older versions for some extra time.
-    # It's unlikely, but possible that specific prosision will not be update for long time and previous version might by gone
-    noncurrent_version_expiration {
-      days = 30
-    }
-  }
-}
