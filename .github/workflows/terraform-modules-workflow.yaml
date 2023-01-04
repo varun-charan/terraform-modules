@@ -212,3 +212,4 @@ jobs:
       target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
     secrets:
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
+      
