@@ -148,49 +148,47 @@ jobs:
     # - name: Run TFLint
     #   run: tflint -chdir=${{ matrix.TF_MODULE }}
 
-    - name: Get AWS Access Key ID
-      id: aws_access_key_id
-      uses: varun-charan/pyaction@v0.5.0
-      env:
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        devops_version: "v0.5.0"
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
-        command: "vault"
-        subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
+    # - name: Get AWS Access Key ID
+    #   id: aws_access_key_id
+    #   uses: varun-charan/pyaction@v0.5.0
+    #   env:
+    #     VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+    #     VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+    #   with:
+    #     devops_version: "v0.5.0"
+    #     index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+    #     export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+    #     command: "vault"
+    #     subcommand: "get"
+    #     args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
     
-    - name: Get AWS Secret Access Key
-      id: aws_secret_access_key
-      uses: varun-charan/pyaction@v0.5.0
-      env:
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        devops_version: "v0.5.0"
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
-        command: "vault"
-        subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
-
-    - name: debug
-      run: |
-        echo "::debug:: ${{ steps.aws_access_key_id.outputs.stdout }}"
-        echo "::debug:: ${{ steps.aws_secret_access_key.outputs.stdout }}"
+    # - name: Get AWS Secret Access Key
+    #   id: aws_secret_access_key
+    #   uses: varun-charan/pyaction@v0.5.0
+    #   env:
+    #     VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+    #     VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+    #   with:
+    #     devops_version: "v0.5.0"
+    #     index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+    #     export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+    #     command: "vault"
+    #     subcommand: "get"
+    #     args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
 
     - name: Terraform Plan
       env:
-        AWS_ACCESS_KEY_ID: ${{ steps.aws_access_key_id.outputs.stdout }}
-        AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       id: plan
       run: |
         echo "::add-mask::$AWS_ACCESS_KEY_ID"
         echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
+        echo "::add-mask::$AWS_SESSION_TOKEN"
         export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
         export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+        export AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }}
         terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
       continue-on-error: false
 
