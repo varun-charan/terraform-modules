@@ -3,7 +3,6 @@ provider "aws" {
 
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/barco-assume-automation"
-    
   }
 }
 
