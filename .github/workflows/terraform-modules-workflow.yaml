@@ -13,6 +13,7 @@ on:
       - '.github/PULL_REQUEST_TEMPLATE/**'
   pull_request:
     types:
+      - open
       - closed
       - synchronize
     branches:
@@ -148,46 +149,49 @@ jobs:
     # - name: Run TFLint
     #   run: tflint -chdir=${{ matrix.TF_MODULE }}
 
-    - name: Get AWS Access Key ID
-      id: aws_access_key_id
-      uses: varun-charan/pyaction@v0.5.0
-      env:
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        devops_version: "v0.5.0"
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
-        command: "vault"
-        subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
+    # - name: Get AWS Access Key ID
+    #   id: aws_access_key_id
+    #   uses: varun-charan/pyaction@v0.5.0
+    #   env:
+    #     VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+    #     VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+    #   with:
+    #     devops_version: "v0.5.0"
+    #     index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+    #     export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+    #     command: "vault"
+    #     subcommand: "get"
+    #     args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_ACCESS_KEY_ID"
     
-    - name: Get AWS Secret Access Key
-      id: aws_secret_access_key
-      uses: varun-charan/pyaction@v0.5.0
-      env:
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        devops_version: "v0.5.0"
-        index_url_pip: ${{ secrets.INDEX_URL_PIP }}
-        export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
-        command: "vault"
-        subcommand: "get"
-        args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
+    # - name: Get AWS Secret Access Key
+    #   id: aws_secret_access_key
+    #   uses: varun-charan/pyaction@v0.5.0
+    #   env:
+    #     VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+    #     VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+    #   with:
+    #     devops_version: "v0.5.0"
+    #     index_url_pip: ${{ secrets.INDEX_URL_PIP }}
+    #     export_list: "VAULT_ADDR=${{ env.VAULT_ADDR }}, VAULT_TOKEN=${{ env.VAULT_TOKEN }}"
+    #     command: "vault"
+    #     subcommand: "get"
+    #     args: "prd/devops/aws/api-users/barco-eci-sandbox AWS_SECRET_ACCESS_KEY"
 
-    - name: Terraform Plan
-      env:
-        AWS_ACCESS_KEY_ID: ${{ steps.aws_access_key_id.outputs.stdout }}
-        AWS_SECRET_ACCESS_KEY: ${{ steps.aws_secret_access_key.outputs.stdout }}
-      id: plan
-      run: |
-        echo "::add-mask::$AWS_ACCESS_KEY_ID"
-        echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
-        export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
-        export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
-        terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
-      continue-on-error: false
+    # - name: Terraform Plan
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+    #   id: plan
+    #   run: |
+    #     echo "::add-mask::$AWS_ACCESS_KEY_ID"
+    #     echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
+    #     echo "::add-mask::$AWS_SESSION_TOKEN"
+    #     export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
+    #     export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+    #     export AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }}
+    #     terraform -chdir=${{ matrix.TF_MODULE }} plan -var-file=.ci/tfplan.tfvars
+    #   continue-on-error: false
 
   perform_security_scan:
     needs: [ get_target_modules ]
@@ -200,3 +204,11 @@ jobs:
       terrascan_iac_version: "v15"
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
+
+  calculate_infra_cost:
+    needs: [ get_target_modules ]
+    uses: varun-charan/reusable-workflows/.github/workflows/calculate-infracost.yaml@master
+    with:
+      target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
+    secrets:
+      infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
