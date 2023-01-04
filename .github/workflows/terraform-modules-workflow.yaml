@@ -7,7 +7,6 @@ on:
       - feature/*
       # Meant for DEVOPS-* tickets
       - hotfix/*
-      - master
     # DO NOT trigger workflow run on updates to templates
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
