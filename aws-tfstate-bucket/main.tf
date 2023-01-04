@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "bucket" {
     # I would prefer to keep older versions for some extra time.
     # It's unlikely, but possible that specific prosision will not be update for long time and previous version might by gone
     noncurrent_version_expiration {
-      days = 365
+      days = 30
     }
   }
 }
