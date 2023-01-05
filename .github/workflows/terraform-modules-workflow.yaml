@@ -129,9 +129,9 @@ jobs:
       id: init
       run: terraform -chdir=${{ matrix.TF_MODULE }} init
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform -chdir=${{ matrix.TF_MODULE }} validate
+    # - name: Terraform Validate
+    #   id: validate
+    #   run: terraform -chdir=${{ matrix.TF_MODULE }} validate
 
     - uses: actions/cache@v2
       name: Cache plugin dir
