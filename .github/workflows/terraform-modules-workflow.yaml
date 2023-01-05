@@ -129,9 +129,9 @@ jobs:
       id: init
       run: terraform -chdir=${{ matrix.TF_MODULE }} init
 
-    # - name: Terraform Validate
-    #   id: validate
-    #   run: terraform -chdir=${{ matrix.TF_MODULE }} validate
+    - name: Terraform Validate
+      id: validate
+      run: terraform -chdir=${{ matrix.TF_MODULE }} validate
 
     - uses: actions/cache@v2
       name: Cache plugin dir
@@ -145,10 +145,10 @@ jobs:
         tflint_version: v0.44.1
 
     - name: Init TFLint
-      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=.tflint/tflint.hcl --init 
+      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/tflint.hcl) --init 
 
     - name: Run TFLint
-      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=.tflint/tflint.hcl
+      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/tflint.hcl)
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id
