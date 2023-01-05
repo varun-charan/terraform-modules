@@ -11,6 +11,7 @@ on:
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/pull_request_template.md'
+      - '.tflint/**'
   pull_request:
     types:
       - opened
@@ -22,6 +23,7 @@ on:
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/pull_request_template.md'
+      - '.tflint/**'
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
@@ -135,7 +137,7 @@ jobs:
       name: Cache plugin dir
       with:
         path: ~/.tflint.d/plugins
-        key: tflint-${{ hashFiles('../../.tflint/.tflint.hcl') }}
+        key: tflint-${{ hashFiles('./.tflint/.tflint.hcl') }}
     
     - name: Setup TFLint
       uses: terraform-linters/setup-tflint@v2
