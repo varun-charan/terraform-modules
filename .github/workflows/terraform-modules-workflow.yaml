@@ -141,14 +141,19 @@ jobs:
     
     - name: Setup TFLint
       uses: terraform-linters/setup-tflint@v2
-      with:
-        tflint_version: v0.38.1
+      # with:
+      #   tflint_version: v0.38.1
+
+    # - name: Load custom TFLint configuration
+    #   uses: terraform-linters/tflint-load-config-action@v0
+    #   with:
+    #     source-repo: ./.tflint/.tflint.hcl
 
     - name: Init TFLint
-      run: tflint --init
+      run: tflint --init --config=$(realpath .tflint.hcl)
 
     - name: Run TFLint
-      run: tflint -chdir=${{ matrix.TF_MODULE }}
+      run: tflint -chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint.hcl)
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id
