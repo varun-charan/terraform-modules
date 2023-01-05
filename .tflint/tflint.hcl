@@ -9,7 +9,7 @@ config {
   ignore_module = {
   }
 
-  varfile = [".ci/tfplan.tfvars"]
+#   varfile = [".ci/tfplan.tfvars"]
 }
 
 ###   T F L I N T   R U L E S   ###
@@ -24,6 +24,12 @@ rule "terraform_required_providers" {
 }
 
 ###   T F L I N T   P L U G I N S  ###
+plugin "aws" {
+  enabled = true
+  version = "0.21.1"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+}
+
 plugin "azurerm" {
   enabled = true
   version = "0.20.0"

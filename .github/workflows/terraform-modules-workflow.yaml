@@ -137,7 +137,7 @@ jobs:
       name: Cache plugin dir
       with:
         path: ~/.tflint.d/plugins
-        key: tflint-${{ hashFiles('${{ matrix.TF_MODULE }}/.tflint/.tflint.hcl') }}
+        key: tflint-${{ hashFiles('.tflint/tflint.hcl') }}
     
     - name: Setup TFLint
       uses: terraform-linters/setup-tflint@v2
@@ -145,10 +145,10 @@ jobs:
         tflint_version: v0.44.1
 
     - name: Init TFLint
-      run: TFLINT_LOG=debug tflint -chdir=${{ matrix.TF_MODULE }} --init --config=./.tflint/.tflint.hcl
+      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=.tflint/tflint.hcl --init 
 
     - name: Run TFLint
-      run: TFLINT_LOG=debug tflint -chdir=${{ matrix.TF_MODULE }} --config=./.tflint/.tflint.hcl
+      run: TFLINT_LOG=debug tflint --chdir=${{ matrix.TF_MODULE }} --config=.tflint/tflint.hcl
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id
