@@ -7,7 +7,7 @@ provider "aws" {
 }
 
 terraform {
-  required_version = ">= 1.0.11"
+  # required_version = ">= 1.0.11"
   # The configuration for this backend will be filled in by Terragrunt
   # backend "s3" {}
   required_providers {
