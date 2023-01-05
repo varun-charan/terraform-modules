@@ -13,7 +13,8 @@ config {
   # variables = ["foo=bar", "bar=[\"baz\"]"]
 }
 
-# Disallow terraform declarations without require_version.
+###   T F L I N T   R U L E S   ###
+# Disallow terraform declarations without required_version.
 rule "terraform_required_version" {
   enabled = true
 }
@@ -23,6 +24,7 @@ rule "terraform_required_providers" {
   enabled = true
 }
 
+###   T F L I N T   P L U G I N S  ###
 plugin "aws" {
   enabled = true
   version = "0.21.1"
@@ -33,8 +35,4 @@ plugin "azurerm" {
   enabled = true
   version = "0.20.0"
   source  = "github.com/terraform-linters/tflint-ruleset-azurerm"
-}
-
-rule "aws_instance_invalid_type" {
-  enabled = false
 }

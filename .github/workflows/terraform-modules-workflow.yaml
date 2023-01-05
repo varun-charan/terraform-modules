@@ -145,10 +145,10 @@ jobs:
         tflint_version: v0.44.1
 
     - name: Init TFLint
-      run: tflint --init --config=$(realpath .tflint/.tflint.hcl)
+      run: TFLINT_LOG=debug tflint --init --config=$(realpath .tflint/.tflint.hcl)
 
     - name: Run TFLint
-      run: tflint -chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/.tflint.hcl) --var-file="${{ matrix.TF_MODULE }}/.ci/tfplan.tfvars"
+      run: TFLINT_LOG=debug tflint -chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/.tflint.hcl) --var-file="${{ matrix.TF_MODULE }}/.ci/tfplan.tfvars"
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id
