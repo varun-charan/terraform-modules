@@ -81,7 +81,7 @@ jobs:
           ref: master
 
       - run: |
-          echo "${{ join(steps.get_master_sha.outputs.*, '\n') }}"
+          echo "${{ steps.get_master_sha.outputs.* }}"
 
       # Get diff with master branch
       - name: Run changed-files with dir_names
