@@ -1,4 +1,4 @@
-name: consume-custom-action
+name: Terraform Modules CI
 
 on:
   push:
@@ -69,6 +69,31 @@ jobs:
   #         curl --location --request GET 'https://api.newreleases.io/v1/projects' --header 'X-Key: ${{ env.API_KEY }}'
   #       env:
   #         API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
+
+  build:
+    runs-on: ubuntu-latest  # windows-latest | macos-latest
+    name: Test changed-files
+    steps:
+      # Checkout master branch
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+
+      # Get diff with master branch
+      - name: Run changed-files with dir_names
+        id: changed-files-dir-names
+        uses: tj-actions/changed-files@v35
+        with:
+          dir_names: "true"
+          json: "true"
+          # output_dir: "true"
+          # write_output_files: "true"
+
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
 
   # T E R R A F O R M   C I C D 
   get_target_modules:
