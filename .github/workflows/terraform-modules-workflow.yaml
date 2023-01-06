@@ -75,9 +75,13 @@ jobs:
     name: Test changed-files
     steps:
       # Checkout master branch
-      - uses: actions/checkout@v3
+      - id: get_master_sha
+        uses: actions/checkout@v3
         with:
           ref: master
+
+      - run: |
+          echo "Output SHA: ${{ steps.get_master_sha.outputs.commit }}"
 
       # Get diff with master branch
       - name: Run changed-files with dir_names
@@ -86,6 +90,7 @@ jobs:
         with:
           dir_names: "true"
           json: "true"
+          base_sha: ${{ steps.get_master_sha.outputs.commit }}
           # output_dir: "true"
           # write_output_files: "true"
 
