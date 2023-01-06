@@ -1,6 +1,5 @@
 provider "aws" {
-  version = "~> 2.70"
-  region  = var.aws_region
+  region = var.aws_region
 
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/barco-assume-automation"
@@ -9,6 +8,12 @@ provider "aws" {
 
 terraform {
   required_version = ">= 1.0.11"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 2.46"
+    }
+  }
   # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
+  # backend "s3" {}
 }

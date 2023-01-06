@@ -11,6 +11,7 @@ on:
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/pull_request_template.md'
+      - '.tflint/**'
   pull_request:
     types:
       - opened
@@ -22,6 +23,7 @@ on:
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/pull_request_template.md'
+      - '.tflint/**'
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
@@ -83,12 +85,12 @@ jobs:
         run: |
           git fetch origin master
 
-          if [ -z `git diff --dirstat=files,0 --name-only origin/master | grep -v .github` ]; then
+          if [ -z `git diff --dirstat=files,0 --name-only origin/master | grep -v .github | grep -v .tflint` ]; then
             CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
             echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
           else
-            CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | uniq | sort`
+            CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
 
             echo "TF Modules: " $CHANGED_TF_MODULES
 
@@ -131,22 +133,22 @@ jobs:
       id: validate
       run: terraform -chdir=${{ matrix.TF_MODULE }} validate
 
-    # - uses: actions/cache@v2
-    #   name: Cache plugin dir
-    #   with:
-    #     path: ~/.tflint.d/plugins
-    #     key: tflint-${{ hashFiles('.tflint.hcl') }}
+    - uses: actions/cache@v2
+      name: Cache plugin dir
+      with:
+        path: ~/.tflint.d/plugins
+        key: tflint-${{ hashFiles('.tflint/tflint.hcl') }}
     
-    # - name: Setup TFLint
-    #   uses: terraform-linters/setup-tflint@v2
-    #   with:
-    #     tflint_version: v0.38.1
+    - name: Setup TFLint
+      uses: terraform-linters/setup-tflint@v2
+      with:
+        tflint_version: v0.44.1
 
-    # - name: Init TFLint
-    #   run: tflint --init
+    - name: Init TFLint
+      run: tflint --chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/tflint.hcl) --init 
 
-    # - name: Run TFLint
-    #   run: tflint -chdir=${{ matrix.TF_MODULE }}
+    - name: Run TFLint
+      run: tflint --chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/tflint.hcl)
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id

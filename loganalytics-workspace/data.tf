@@ -10,5 +10,4 @@ locals {
     "module-name"    = local.module-name
     "module-version" = local.module-version
   }
-  comment = "Managed by TFM/TG (${local.module-name}-${local.module-version})"
 }
