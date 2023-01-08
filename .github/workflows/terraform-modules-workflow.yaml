@@ -82,7 +82,7 @@ jobs:
       - name: Get target TF modules
         id: get_target_tf_modules
         shell: bash
-        run: ./github/scripts/get_target_modules.sh
+        run: .github/scripts/get_target_modules.sh
 
   static-analysis:
     needs: [ get_target_modules ]
