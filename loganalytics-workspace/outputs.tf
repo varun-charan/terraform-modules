@@ -11,3 +11,4 @@ output "log_workspace_list" {
 output "team_name" {
   value = var.team_name
 }
+
