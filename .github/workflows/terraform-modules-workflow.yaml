@@ -84,6 +84,7 @@ jobs:
         id: last_successful_commit_push
         with:
           main-branch-name: master
+          workflow-id: terraform-modules-workflow.yaml
 
       # Get diff with master branch
       - name: Run changed-files with dir_names
@@ -93,7 +94,6 @@ jobs:
           dir_names: "true"
           json: "true"
           base_sha: ${{ steps.last_successful_commit_push.outputs.base }}
-          workflow-id: terraform-modules-workflow.yaml
 
       - name: List all changed files
         run: |
