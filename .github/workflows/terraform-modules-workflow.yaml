@@ -228,7 +228,7 @@ jobs:
   release_module_tags:
     needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
     runs-on: ubuntu-latest
-    # if: github.base_ref == 'master' && github.event.pull_request.merged == true
+    if: github.base_ref == 'master' && github.event.pull_request.merged == true
     strategy:
       matrix:
         TF_MODULE: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
@@ -251,24 +251,24 @@ jobs:
           new_tag: ${{ steps.get_next_tag.outputs.new_tag }}
           prev_tag: ${{ steps.get_next_tag.outputs.previous_tag }}
 
-      # - name: Create a GitHub release
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     tag: ${{ needs.get-next-tag-version.outputs.next-tag }}
-      #     name: ${{ needs.get-next-tag-version.outputs.next-tag }}
-      #     # Generates awesome release notes that you can edit later if you want.
-      #     generateReleaseNotes: false
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.get-next-tag-version.outputs.next-tag }}
+          name: ${{ needs.get-next-tag-version.outputs.next-tag }}
+          # Generates awesome release notes that you can edit later if you want.
+          generateReleaseNotes: false
       
-  # update_changelog:
-  #   needs: [release_module_tags]
-  #   runs-on: ubuntu-latest
-  #   if: github.base_ref == 'master' && github.event.pull_request.merged == true
-  #   steps:  
-  #     - name: Update Changelog
-  #       id: github_release
-  #       uses: mikepenz/release-changelog-builder-action@v3
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  update_changelog:
+    needs: [release_module_tags]
+    runs-on: ubuntu-latest
+    if: github.base_ref == 'master' && github.event.pull_request.merged == true
+    steps:  
+      - name: Update Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
   # run_terraform_apply:
   #   needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
