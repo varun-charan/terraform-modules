@@ -80,8 +80,10 @@ jobs:
         with:
           ref: master
 
-      - run: |
-          echo "${{ steps.get_master_sha.outputs.* }}"
+      - uses: nrwl/nx-set-shas@v3
+        id: last_successful_commit_push
+        with:
+          main-branch-name: master
 
       # Get diff with master branch
       - name: Run changed-files with dir_names
@@ -90,9 +92,7 @@ jobs:
         with:
           dir_names: "true"
           json: "true"
-          base_sha: ${{ steps.get_master_sha.outputs.commit }}
-          # output_dir: "true"
-          # write_output_files: "true"
+          base_sha: ${{ steps.last_successful_commit_push.outputs.base }}
 
       - name: List all changed files
         run: |
