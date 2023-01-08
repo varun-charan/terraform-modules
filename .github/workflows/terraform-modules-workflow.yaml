@@ -9,9 +9,9 @@ on:
       - hotfix/*
     # DO NOT trigger workflow run on updates to templates
     paths-ignore:
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/pull_request_template.md'
+      - '.github/**'
       - '.tflint/**'
+      - '!.github/workflows/terraform-modules-workflow.yaml'
   pull_request:
     types:
       - opened
@@ -21,9 +21,9 @@ on:
       - master
     # DO NOT trigger workflow run on updates to templates
     paths-ignore:
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/pull_request_template.md'
+      - '.github/**'
       - '.tflint/**'
+      - '!.github/workflows/terraform-modules-workflow.yaml'
   # For manual trigger of job, if required. Avoids need to use dummy commits to initiate workflow.Applicable to master branch only since for it, source tag is picked from Git tags and not from Commit hash as is the case for dev branches.
   workflow_dispatch:
 
@@ -70,37 +70,6 @@ jobs:
   #       env:
   #         API_KEY: ${{ needs.non_exec_command.outputs.stdout }}
 
-  build:
-    runs-on: ubuntu-latest  # windows-latest | macos-latest
-    name: Test changed-files
-    steps:
-      # Checkout master branch
-      - id: get_master_sha
-        uses: actions/checkout@v3
-        with:
-          ref: master
-
-      - uses: nrwl/nx-set-shas@v3
-        id: last_successful_commit_push
-        with:
-          main-branch-name: master
-          workflow-id: terraform-modules-workflow.yaml
-
-      # Get diff with master branch
-      - name: Run changed-files with dir_names
-        id: changed-files-dir-names
-        uses: tj-actions/changed-files@v35
-        with:
-          dir_names: "true"
-          json: "true"
-          base_sha: ${{ steps.last_successful_commit_push.outputs.base }}
-
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "$file was changed"
-          done
-
   # T E R R A F O R M   C I C D 
   get_target_modules:
     runs-on: ubuntu-latest
@@ -113,28 +82,7 @@ jobs:
       - name: Get target TF modules
         id: get_target_tf_modules
         shell: bash
-        run: |
-          git fetch origin master
-
-          if [ -z `git diff --dirstat=files,0 --name-only origin/master | grep -v .github | grep -v .tflint` ]; then
-            CHANGED_TF_MODULES_JSON=$(printf '[]\n')
-
-            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
-          else
-            CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
-
-            echo "TF Modules: " $CHANGED_TF_MODULES
-
-            if [ -z "$CHANGED_TF_MODULES" ]; then
-              CHANGED_TF_MODULES_JSON=$(printf '[]\n')
-            else
-              CHANGED_TF_MODULES_JSON=$(printf '['; for i in ${CHANGED_TF_MODULES[@]}; do printf ' \"%s\", ' $i; done | sed 's/,\([^,]*\)$/\1/'; printf ']\n')
-            fi
-
-            echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
-          fi
-
-          echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
+        run: ./github/scripts/get_target_modules.sh
 
   static-analysis:
     needs: [ get_target_modules ]
