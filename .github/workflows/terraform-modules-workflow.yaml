@@ -93,6 +93,7 @@ jobs:
           dir_names: "true"
           json: "true"
           base_sha: ${{ steps.last_successful_commit_push.outputs.base }}
+          workflow-id: terraform-modules-workflow.yaml
 
       - name: List all changed files
         run: |
