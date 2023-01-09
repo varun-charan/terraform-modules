@@ -279,8 +279,7 @@ jobs:
           toTag: ${{ steps.get_next_tag.outputs.new_tag }}
 
       ## FOR FUTURE: For each updated TF module:
-      ##    1. Add/Update TFDoc
-      ##    2. Send new tag release notification to Teams
+      ##    1. Send new tag release notification to Teams
     
   # run_terraform_apply:
   #   needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
