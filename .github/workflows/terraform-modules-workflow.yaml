@@ -94,6 +94,13 @@ jobs:
     steps:
     - name: Checkout application GitHub repo
       uses: actions/checkout@v3
+      if: github.event_name != 'pull_request'
+
+    - name: Checkout application repo in case of PRs only
+      uses: actions/checkout@v3
+      if: github.event_name == 'pull_request'
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Setup Terraform  
       uses: hashicorp/setup-terraform@v2
