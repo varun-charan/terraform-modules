@@ -100,6 +100,16 @@ jobs:
       with:
         terraform_version: 1.0.11
 
+    - name: Render terraform docs inside the README.md and push changes back to PR branch
+      uses: terraform-docs/gh-actions@v1.0.0
+      if: github.event_name == 'pull_request'
+      with:
+        working-dir: ${{ matrix.TF_MODULE }}
+        output-file: README.md
+        output-method: inject
+        git-push: "true"
+        git-commit-message: "[skip ci] Terraform-Docs automated action"
+
     - name: Terraform Format
       id: fmt
       run: terraform -chdir=${{ matrix.TF_MODULE }} fmt -check -recursive -diff
@@ -128,16 +138,6 @@ jobs:
 
     - name: Run TFLint
       run: tflint --chdir=${{ matrix.TF_MODULE }} --config=$(realpath .tflint/tflint.hcl)
-
-    - name: Render terraform docs inside the README.md and push changes back to PR branch
-      uses: terraform-docs/gh-actions@v1.0.0
-      if: github.event_name == 'pull_request'
-      with:
-        working-dir: ${{ matrix.TF_MODULE }}
-        output-file: README.md
-        output-method: inject
-        git-push: "true"
-        git-commit-message: "[skip ci] Terraform-Docs automated action"
 
     # - name: Get AWS Access Key ID
     #   id: aws_access_key_id
