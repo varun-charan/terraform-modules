@@ -88,15 +88,12 @@ jobs:
 
   get_target_modules_on_master:
     runs-on: ubuntu-latest
-    if: github.base_ref == 'master' && github.event.pull_request.merged == true
+    # if: github.base_ref == 'master' && github.event.pull_request.merged == true
     # outputs:
     #   tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
     steps:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
-        with:
-          # checkout full tree
-          fetch-depth: 0
 
       - run: |
           echo "Head_Ref: ${{github.head_ref}}"
@@ -105,7 +102,7 @@ jobs:
           echo "Event: ${{github.event}}"
 
       - run: |
-          git fetch origin ${{ github.head_ref }}
+          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
 
           git diff --dirstat=files,0 --name-only `git merge-base ${{ github.head_ref }} ${{ github.base_ref }}`
 
