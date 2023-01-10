@@ -8,6 +8,7 @@ on:
       # Meant for DEVOPS-* tickets
       - hotfix/*
     # DO NOT trigger workflow run on updates to templates
+      # - master
     paths-ignore:
       - '.github/**'
       - '.tflint/**'
@@ -83,6 +84,32 @@ jobs:
         id: get_target_tf_modules
         shell: bash
         run: ./.github/scripts/get_target_modules.sh
+
+  get_target_modules_on_master:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master' 
+    # outputs:
+    #   tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
+    steps:
+      - name: Checkout application GitHub repo
+        uses: actions/checkout@v3
+        with:
+          # checkout full tree
+          fetch-depth: 0
+
+      - run: |
+          echo "Before: ${{github.event.before}}"
+          echo "After: ${{github.event.after}}"
+          echo "SHA: ${{github.sha}}"
+          echo "Event: ${{github.event}}"
+
+      - run: |
+          git diff --dirstat=files,0 --name-only ${{github.event.before}}...${{github.event.after}}
+
+      # - name: Get target TF modules
+      #   id: get_target_tf_modules
+      #   shell: bash
+      #   run: ./.github/scripts/get_target_modules.sh
 
   static-analysis:
     needs: [ get_target_modules ]
