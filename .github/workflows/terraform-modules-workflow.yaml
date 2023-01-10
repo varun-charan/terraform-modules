@@ -106,9 +106,15 @@ jobs:
       - run: |
           git log --pretty=format:"%H" -n 2 >> previous_commits
 
+          echo "Starting CAT"
           cat previous_commits
+          echo "Ending CAT"
 
+          cat previous_commits | sed -n '2p'
+
+          echo "Starting GIT DIFF"
           git diff --dirstat=files,0 --name-only `cat previous_commits | sed -n '2p'` `cat previous_commits | sed -n '1p'`
+          echo "Ending GIT DIFF"
 
       # - name: Get target TF modules
       #   id: get_target_tf_modules
