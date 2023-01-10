@@ -94,6 +94,8 @@ jobs:
     steps:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - run: |
           echo "Head_Ref: ${{github.head_ref}}"
@@ -103,6 +105,8 @@ jobs:
 
       - run: |
           git log --pretty=format:"%H" -n 2 >> previous_commits
+
+          cat previous_commits
 
           git diff --dirstat=files,0 --name-only `cat previous_commits | sed -n '2p'` `cat previous_commits | sed -n '1p'`
 
