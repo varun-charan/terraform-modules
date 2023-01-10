@@ -76,7 +76,7 @@ jobs:
   get_target_modules:
     runs-on: ubuntu-latest
     outputs:
-      tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules || }}
+      tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
     steps:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
