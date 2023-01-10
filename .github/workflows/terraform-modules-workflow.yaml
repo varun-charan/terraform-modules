@@ -17,6 +17,7 @@ on:
     types:
       - opened
       - synchronize
+      - closed
     branches:
       # Meant for running after PR merged on master
       - master
