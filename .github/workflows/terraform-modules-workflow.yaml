@@ -102,9 +102,9 @@ jobs:
           echo "Event: ${{github.event}}"
 
       - run: |
-          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
+          git fetch origin ${{ github.head_ref }}
 
-          git diff --dirstat=files,0 --name-only `git merge-base ${{ github.head_ref }} ${{ github.base_ref }}`
+          git diff --dirstat=files,0 --name-only `git merge-base "origin/${{ github.head_ref }}" ${{ github.base_ref }}`
 
       # - name: Get target TF modules
       #   id: get_target_tf_modules
