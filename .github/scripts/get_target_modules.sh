@@ -28,7 +28,7 @@ if [[ "$BRANCH_NAME" != "master" ]]; then
 elif [[ "$BRANCH_NAME" == "master" && "$PR_MERGED" == "true" ]]; then
     git log --pretty=format:"%H" -n 2 > previous_commits
 
-    if [ -z `git diff --dirstat=files,0 --name-only "`cat previous_commits | sed -n '2p'`" "`cat previous_commits | sed -n '1p'`" | grep -v .github | grep -v .tflint` ]; then
+    if [[ -z `git diff --dirstat=files,0 --name-only "`cat previous_commits | sed -n '2p'`" "`cat previous_commits | sed -n '1p'`" | grep -v .github | grep -v .tflint` ]]; then
         CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
         echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
