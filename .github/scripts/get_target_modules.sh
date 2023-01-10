@@ -48,5 +48,7 @@ elif [[ "$BRANCH_NAME" == "master" && "$PR_MERGED" == "true" ]]; then
     fi
 
     echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
+else
+    echo "Something went wrong!!!"
 fi
 
