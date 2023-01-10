@@ -104,6 +104,8 @@ jobs:
       - run: |
           git log --pretty=format:"%H" -n 2 >> previous_commits
 
+          cat previous_commits
+
           git diff --dirstat=files,0 --name-only `cat previous_commits | sed -n '2p'` `cat previous_commits | sed -n '1p'`
 
       # - name: Get target TF modules
