@@ -88,7 +88,7 @@ jobs:
 
   get_target_modules_on_master:
     runs-on: ubuntu-latest
-    if: github.ref_name == 'master' 
+    if: github.base_ref == 'master' && github.event.pull_request.merged == true
     # outputs:
     #   tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
     steps:
@@ -99,13 +99,13 @@ jobs:
           fetch-depth: 0
 
       - run: |
-          echo "Before: ${{github.event.before}}"
-          echo "After: ${{github.event.after}}"
+          echo "Head_Ref: ${{github.head_ref}}"
+          echo "Base_Ref: ${{github.base_ref}}"
           echo "SHA: ${{github.sha}}"
           echo "Event: ${{github.event}}"
 
       - run: |
-          git diff --dirstat=files,0 --name-only ${{github.event.before}}...${{github.event.after}}
+          git diff --dirstat=files,0 --name-only `git merge-base ${{ github.head_ref }} ${{ github.base_ref }}`
 
       # - name: Get target TF modules
       #   id: get_target_tf_modules
