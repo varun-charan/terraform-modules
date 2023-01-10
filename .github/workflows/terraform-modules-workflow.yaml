@@ -80,46 +80,22 @@ jobs:
     steps:
       - name: Checkout application GitHub repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Get target TF modules
         id: get_target_tf_modules
         shell: bash
         run: ./.github/scripts/get_target_modules.sh
-
-  get_target_modules_on_master:
-    runs-on: ubuntu-latest
-    if: github.base_ref == 'master' && github.event.pull_request.merged == true
-    # outputs:
-    #   tf_modules: ${{ steps.get_target_tf_modules.outputs.tf_modules }}
-    steps:
-      - name: Checkout application GitHub repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - run: |
-          echo "Head_Ref: ${{github.head_ref}}"
-          echo "Base_Ref: ${{github.base_ref}}"
-          echo "SHA: ${{github.sha}}"
-          echo "Event: ${{github.event}}"
-
-      - run: |
-          git log --pretty=format:"%H" -n 2 >> previous_commits
-
-          echo "Starting CAT"
-          cat previous_commits
-          echo "Ending CAT"
-
-          cat previous_commits | sed -n '2p'
-
-          echo "Starting GIT DIFF"
-          git diff --dirstat=files,0 --name-only `cat previous_commits | sed -n '2p'` `cat previous_commits | sed -n '1p'`
-          echo "Ending GIT DIFF"
+        env:
+          BRANCH_NAME: ${{ github.ref_name || github.base_ref }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
 
       # - name: Get target TF modules
       #   id: get_target_tf_modules
+      #   if: github.base_ref == 'master' && github.event.pull_request.merged == true
       #   shell: bash
-      #   run: ./.github/scripts/get_target_modules.sh
+      #   run: ./.github/scripts/get_target_modules_on_master.sh
 
   static-analysis:
     needs: [ get_target_modules ]
