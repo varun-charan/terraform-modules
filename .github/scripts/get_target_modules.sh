@@ -25,7 +25,7 @@ if [[ "$BRANCH_NAME" != "master" ]]; then
 
     echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
-elif [[ "$BRANCH_NAME" == "master" && "$PR_MERGED" == "true" ]]; then
+elif [[ "$BRANCH_NAME" == "master" ]]; then
     git log --pretty=format:"%H" -n 2 > /tmp/previous_commits
 
     echo "START CATing...."
