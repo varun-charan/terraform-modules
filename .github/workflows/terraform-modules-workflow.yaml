@@ -253,6 +253,7 @@ jobs:
     strategy:
       matrix:
         TF_MODULE: "${{ fromJson(needs.get_target_modules.outputs.tf_modules) }}"
+    permissions: write-all
     steps:
       - name: Checkout application repo in case of PRs only
         uses: actions/checkout@v3
