@@ -232,9 +232,7 @@ jobs:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
-      upload_sarif: true
       target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
-      severity: "high"
       terrascan_iac_type: "terraform"
       terrascan_iac_version: "v15"
     secrets:
