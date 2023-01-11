@@ -302,6 +302,9 @@ jobs:
           outputFile: "CHANGELOG.md"
 
       - run: |
+          pwd
+          ls -la
+          cd ../..
           find . -name "CHANGELOG.md"
 
       - name: Create a GitHub release
