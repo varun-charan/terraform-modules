@@ -298,21 +298,14 @@ jobs:
           path: "${{ matrix.TF_MODULE }}"
           repo: "./${{ matrix.TF_MODULE }}"
           fromTag: ${{ steps.get_next_tag.outputs.previous_tag }}
-          toTag: ${{ steps.get_next_tag.outputs.new_tag }}          
-          outputFile: "${{ matrix.TF_MODULE }}/CHANGELOG.md"
-
-      - run: |
-          pwd
-          ls -la
-          cd ../..
-          find . -name "CHANGELOG.md"
+          toTag: ${{ steps.get_next_tag.outputs.new_tag }}
 
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.get_next_tag.outputs.new_tag }}
           name: ${{ steps.get_next_tag.outputs.new_tag }}
-          bodyFile: "${{ matrix.TF_MODULE }}/CHANGELOG.md"
+          body: ${{ steps.github_release.outputs.changelog }}
 
       ## FOR FUTURE: For each updated TF module:
       ##    1. Send new tag release notification to Teams
