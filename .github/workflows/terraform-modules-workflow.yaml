@@ -90,7 +90,6 @@ jobs:
           ./.github/scripts/get_target_modules.sh
         env:
           BRANCH_NAME: ${{ github.ref_name || github.base_ref }}
-          # PR_MERGED: ${{ github.event.pull_request.merged }}
 
   static-analysis:
     needs: [ get_target_modules ]
@@ -229,19 +228,17 @@ jobs:
     #   if: steps.plan.outcome == 'failure'
     #   run: exit 1
 
-  perform_security_scan:
+  security:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
-      upload_sarif: true
       target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
-      severity: "low"
       terrascan_iac_type: "terraform"
       terrascan_iac_version: "v15"
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
 
-  calculate_infra_cost:
+  costing:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/calculate-infracost.yaml@master
     with:
@@ -249,8 +246,8 @@ jobs:
     secrets:
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
 
-  release_module_tags:
-    needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
+  tagging:
+    needs: [get_target_modules, static-analysis, security, costing]
     runs-on: ubuntu-latest
     if: github.base_ref == 'master' && github.event.pull_request.merged == true
     strategy:
@@ -290,7 +287,7 @@ jobs:
       ##    1. Send new tag release notification to Teams
     
   # run_terraform_apply:
-  #   needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
+  #   needs: [get_target_modules, static-analysis, security, costing]
   #   runs-on: ubuntu-latest
   #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
   #   env:
