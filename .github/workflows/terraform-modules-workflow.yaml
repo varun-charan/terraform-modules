@@ -232,22 +232,15 @@ jobs:
 
   perform_security_scan:
     needs: [ get_target_modules ]
-    runs-on: ubuntu-latest
-    steps:
-      # This will prepend refs/heads/ if the branch name does not start with refs/
-      - name: Update GITHUB_REF
-        id: update-github-ref
-        run: echo ::set-output name=fixed_github_ref::$([[ "$GITHUB_REF" =~ refs\/(heads|pull|tags)\/.* ]] && echo $GITHUB_REF || echo "refs/heads/$GITHUB_REF")
-
-      - uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
-        with:
-          upload_sarif: true
-          target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
-          severity: "high"
-          terrascan_iac_type: "terraform"
-          terrascan_iac_version: "v15"
-        secrets:
-          snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
+    uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
+    with:
+      upload_sarif: true
+      target_dirs: ${{ needs.get_target_modules.outputs.tf_modules }}
+      severity: "low"
+      terrascan_iac_type: "terraform"
+      terrascan_iac_version: "v15"
+    secrets:
+      snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
 
   calculate_infra_cost:
     needs: [ get_target_modules ]
