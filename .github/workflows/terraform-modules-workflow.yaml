@@ -299,7 +299,7 @@ jobs:
           repo: "./${{ matrix.TF_MODULE }}"
           fromTag: ${{ steps.get_next_tag.outputs.previous_tag }}
           toTag: ${{ steps.get_next_tag.outputs.new_tag }}          
-          outputFile: "CHANGELOG.md"
+          outputFile: "${{ matrix.TF_MODULE }}/CHANGELOG.md"
 
       - run: |
           pwd
