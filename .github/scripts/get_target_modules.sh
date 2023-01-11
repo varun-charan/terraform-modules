@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo $BRANCH_NAME $PR_MERGED
+echo "Branch Name: $BRANCH_NAME"
 
 if [[ "$BRANCH_NAME" != "master" ]]; then
     git fetch origin master

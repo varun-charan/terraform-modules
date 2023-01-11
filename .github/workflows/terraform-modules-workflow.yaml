@@ -90,7 +90,6 @@ jobs:
           ./.github/scripts/get_target_modules.sh
         env:
           BRANCH_NAME: ${{ github.ref_name || github.base_ref }}
-          # PR_MERGED: ${{ github.event.pull_request.merged }}
 
   static-analysis:
     needs: [ get_target_modules ]
