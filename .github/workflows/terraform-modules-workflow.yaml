@@ -228,7 +228,7 @@ jobs:
     #   if: steps.plan.outcome == 'failure'
     #   run: exit 1
 
-  perform_security_scan:
+  security:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/iac-security-scans.yaml@master
     with:
@@ -238,7 +238,7 @@ jobs:
     secrets:
       snyk_auth_token: ${{ secrets.SNYK_AUTH_TOKEN }}
 
-  calculate_infra_cost:
+  costing:
     needs: [ get_target_modules ]
     uses: varun-charan/reusable-workflows/.github/workflows/calculate-infracost.yaml@master
     with:
@@ -246,7 +246,7 @@ jobs:
     secrets:
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
 
-  release_module_tags:
+  tagging:
     needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
     runs-on: ubuntu-latest
     if: github.base_ref == 'master' && github.event.pull_request.merged == true
