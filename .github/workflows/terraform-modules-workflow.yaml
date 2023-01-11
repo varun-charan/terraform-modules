@@ -302,7 +302,8 @@ jobs:
           path: "${{ matrix.TF_MODULE }}"
           repo: "./${{ matrix.TF_MODULE }}"
           fromTag: ${{ steps.get_next_tag.outputs.previous_tag }}
-          toTag: ${{ steps.get_next_tag.outputs.new_tag }}
+          toTag: ${{ steps.get_next_tag.outputs.new_tag }}          
+          outputFile: "CHANGELOG.md"
 
       ## FOR FUTURE: For each updated TF module:
       ##    1. Send new tag release notification to Teams
