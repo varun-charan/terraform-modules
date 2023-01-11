@@ -257,6 +257,8 @@ jobs:
     steps:
       - name: Checkout application repo in case of PRs only
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - uses: mukunku/tag-exists-action@v1.2.0
         id: checkTag
