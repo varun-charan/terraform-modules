@@ -290,25 +290,21 @@ jobs:
           new_tag: ${{ steps.get_next_tag.outputs.new_tag }}
           prev_tag: ${{ steps.get_next_tag.outputs.previous_tag }}
 
-      # - name: Update Changelog
-      #   id: update_changelog
-      #   uses: mikepenz/release-changelog-builder-action@v3.6.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     path: "${{ matrix.TF_MODULE }}"
-      #     repo: "./${{ matrix.TF_MODULE }}"
-      #     fromTag: ${{ steps.get_next_tag.outputs.previous_tag }}
-      #     toTag: ${{ steps.get_next_tag.outputs.new_tag }}
-
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.get_next_tag.outputs.new_tag }}
           name: ${{ steps.get_next_tag.outputs.new_tag }}
           generateReleaseNotes: true
-
-      ## FOR FUTURE: For each updated TF module:
-      ##    1. Send new tag release notification to Teams
+      
+      - name: Notify dedicated teams channel
+        uses: jdcargile/ms-teams-notification@v1.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          notification-summary: "Released new Terraform Module tag - ${{ steps.get_next_tag.outputs.new_tag }}" 
+          notification-color: 17a2b8
+          timezone: Asia/Calcutta
     
   # run_terraform_apply:
   #   needs: [get_target_modules, static-analysis, security, costing]
