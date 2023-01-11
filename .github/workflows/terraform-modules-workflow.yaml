@@ -247,7 +247,7 @@ jobs:
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
 
   tagging:
-    needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
+    needs: [get_target_modules, static-analysis, security, costing]
     runs-on: ubuntu-latest
     if: github.base_ref == 'master' && github.event.pull_request.merged == true
     strategy:
@@ -287,7 +287,7 @@ jobs:
       ##    1. Send new tag release notification to Teams
     
   # run_terraform_apply:
-  #   needs: [get_target_modules, static-analysis, perform_security_scan, calculate_infra_cost]
+  #   needs: [get_target_modules, static-analysis, security, costing]
   #   runs-on: ubuntu-latest
   #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
   #   env:
