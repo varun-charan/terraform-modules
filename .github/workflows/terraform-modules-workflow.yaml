@@ -302,8 +302,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          notification-summary: "Released new Terraform Module tag - ${{ steps.get_next_tag.outputs.new_tag }}" 
-          notification-color: 17a2b8
+          notification-summary: "&#x1F680 Released new Terraform Module tag - ${{ steps.get_next_tag.outputs.new_tag }}" 
+          notification-color: 28a745
           timezone: Asia/Calcutta
     
   # run_terraform_apply:
