@@ -26,15 +26,15 @@ if [[ "$BRANCH_NAME" != "master" ]]; then
     echo "::set-output name=tf_modules::$CHANGED_TF_MODULES_JSON"
 
 elif [[ "$BRANCH_NAME" == "master" && "$PR_MERGED" == "true" ]]; then
-    git log --pretty=format:"%H" -n 2 > previous_commits
+    git log --pretty=format:"%H" -n 2 > /tmp/previous_commits
 
-    if [[ -z `git diff --dirstat=files,0 --name-only "`cat previous_commits | sed -n '2p'`" "`cat previous_commits | sed -n '1p'`" | grep -v .github | grep -v .tflint` ]]; then
+    if [[ -z `git diff --dirstat=files,0 --name-only "`cat /tmp/previous_commits | sed -n '2p'`" "`cat /tmp/previous_commits | sed -n '1p'`" | grep -v .github | grep -v .tflint` ]]; then
 
         CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
         echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
     else
-        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only "`cat previous_commits | sed -n '2p'`" "`cat previous_commits | sed -n '1p'`" | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
+        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only "`cat /tmp/previous_commits | sed -n '2p'`" "`cat /tmp/previous_commits | sed -n '1p'`" | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
 
         echo "TF Modules: " $CHANGED_TF_MODULES
 
