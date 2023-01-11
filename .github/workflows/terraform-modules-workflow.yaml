@@ -290,12 +290,22 @@ jobs:
           new_tag: ${{ steps.get_next_tag.outputs.new_tag }}
           prev_tag: ${{ steps.get_next_tag.outputs.previous_tag }}
 
+      - name: Update Changelog
+        id: update_changelog
+        uses: mikepenz/release-changelog-builder-action@v3.6.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: "${{ matrix.TF_MODULE }}"
+          repo: "./${{ matrix.TF_MODULE }}"
+          fromTag: ${{ steps.get_next_tag.outputs.previous_tag }}
+          toTag: ${{ steps.get_next_tag.outputs.new_tag }}
+
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.get_next_tag.outputs.new_tag }}
           name: ${{ steps.get_next_tag.outputs.new_tag }}
-          generateReleaseNotes: true
+          body: ${{ steps.github_release.outputs.changelog }}
       
       - name: Notify dedicated teams channel
         uses: jdcargile/ms-teams-notification@v1.3
