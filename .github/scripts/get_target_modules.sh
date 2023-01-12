@@ -5,12 +5,12 @@ echo "Branch Name: $BRANCH_NAME"
 if [[ "$BRANCH_NAME" != "master" ]]; then
     git fetch origin master
 
-    if [ -z `git diff --dirstat=files,0 --name-only origin/master | grep -v .github | grep -v .tflint` ]; then
+    if [ -z `git diff --dirstat=files,0 --name-only origin/master | grep ".tf"` ]; then
         CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
         echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
     else
-        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
+        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only origin/master | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep ".tf" | uniq | sort`
 
         echo "TF Modules: " $CHANGED_TF_MODULES
 
@@ -39,13 +39,13 @@ elif [[ "$BRANCH_NAME" == "master" ]]; then
     echo "$BASE_COMMIT ... $HEAD_COMMIT"
     echo "END Echoing"
 
-    if [[ -z `git diff --dirstat=files,0 --name-only $BASE_COMMIT $HEAD_COMMIT | grep -v .github | grep -v .tflint` ]]; then
+    if [[ -z `git diff --dirstat=files,0 --name-only $BASE_COMMIT $HEAD_COMMIT | grep ".tf"` ]]; then
 
         CHANGED_TF_MODULES_JSON=$(printf '[]\n')
 
         echo "TF Modules JSON: " $CHANGED_TF_MODULES_JSON
     else
-        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $BASE_COMMIT $HEAD_COMMIT | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep -v .github | grep -v .tflint | uniq | sort`
+        CHANGED_TF_MODULES=`git diff --dirstat=files,0 --name-only $BASE_COMMIT $HEAD_COMMIT | sed -E 's/^[ 0-9.]+% //g' | cut -d '/' -f1 | grep ".tf" | uniq | sort`
 
         echo "TF Modules: " $CHANGED_TF_MODULES
 
