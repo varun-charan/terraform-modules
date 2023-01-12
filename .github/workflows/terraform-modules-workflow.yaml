@@ -252,7 +252,7 @@ jobs:
       contents: read # for TimonVS/pr-labeler-action to read config file
       pull-requests: write # for TimonVS/pr-labeler-action to add labels in PR
     runs-on: ubuntu-latest
-    if: github.base_ref == 'master' && github.event.pull_request.opened == true
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
     steps:
       - uses: TimonVS/pr-labeler-action@v4.1.1
         with:
