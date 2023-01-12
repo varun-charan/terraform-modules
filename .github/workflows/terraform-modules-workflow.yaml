@@ -246,6 +246,19 @@ jobs:
     secrets:
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
 
+  # Label PRs depending on branch name.
+  pr-labeler:
+    permissions:
+      contents: read # for TimonVS/pr-labeler-action to read config file
+      pull-requests: write # for TimonVS/pr-labeler-action to add labels in PR
+    runs-on: ubuntu-latest
+    if: github.base_ref == 'master' && github.event.pull_request.opened == true
+    steps:
+      - uses: TimonVS/pr-labeler-action@v4.1.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/config/pr-labeler.yml
+
   tagging:
     needs: [get_target_modules, static-analysis, security, costing]
     runs-on: ubuntu-latest
