@@ -3,13 +3,15 @@
       {
         "title": "## 🚀 Features",
         "labels": [
-          "feature"
+          "feature",
+          "enhancement"
         ]
       },
       {
-        "title": "## 🐛 Fixes",
+        "title": "## 🐛 Bug Fixes",
         "labels": [
-          "fix"
+          "fix",
+          "bug"
         ]
       },
       {
@@ -24,5 +26,7 @@
           "other"
         ]
       }
-    ]
+    ],
+    "sort": "ASC",
+    "empty_template": "- no changes"
   }
